@@ -1,0 +1,66 @@
+body {
+  font-family: sans-serif;
+}
+.example-container {
+  align-items: bottom;
+  height: 50%;
+  width: calc(100% - 24px);
+  position: fixed;
+  top: 10px;
+}
+
+.ChatInputNeue-module {
+  background: #fff;
+  border: 1px solid #d4d6db;
+  border-radius: 12px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 400;
+  height: 100%;
+  max-height: 500px;
+  min-height: 32px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overflow: hidden auto;
+  -webkit-transition: border 0.2s ease, -webkit-box-shadow 0.2s ease;
+  transition: border 0.2s ease, -webkit-box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease, border 0.2s ease;
+  transition: box-shadow 0.2s ease, border 0.2s ease,
+    -webkit-box-shadow 0.2s ease;
+
+  max-width: 100%;
+  min-width: 100px;
+  padding: 12px 12px 40px;
+}
+
+.title {
+  font-size: 16px;
+  margin: 20px 0;
+}
+
+.typeahead-menu {
+  z-index: 9999;
+  background: #fafafa;
+  color: black;
+  box-shadow: 0 20px 24px -4px rgba(16, 24, 40, 0.2);
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1.5px solid #b7bfcd;
+}
+
+.menu-item:first-child {
+  border-radius: 5px 5px 0 0;
+}
+.menu-item:last-child {
+  border-radius: 0 0 5px 5px;
+  border-bottom: none;
+}
+.menu-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #b7bfcd;
+}
+
+.menu-item:hover {
+  background: "#76A9FA";
+}
