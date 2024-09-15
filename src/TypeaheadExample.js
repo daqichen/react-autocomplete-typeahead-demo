@@ -13,7 +13,7 @@ export default function TypeaheadExample() {
     if (document.getElementById("listening-input-change")) {
       userInputBox = document.getElementById("listening-input-change");
     } else {
-      userInputBox = document.getElementsByClassName("tiptap")[0];
+      userInputBox = document.getElementsByClassName("ChatInput")[0];
       userInputBox.setAttribute("id", "listening-input-change");
     }
     ["keyup", "click", "scroll"].forEach(function (event) {
@@ -24,12 +24,12 @@ export default function TypeaheadExample() {
     window.addEventListener("resize", dismissMenuIfInactive);
 
     userInputBox.addEventListener("input", function () {
-      console.log("userInputBox", this);
+      // console.log("userInputBox", this);
       const position = getCursorLocation(this);
-      console.log("position", position);
+      // console.log("position", position);
       const strippedHtml = this.innerHTML
         .substring(0, position)
-        .replace(/<[^>]+>/g, "");
+        .replace(/<[^>]+>/g, " ");
       const lastWord = strippedHtml.split(" ").pop();
       if (!lastWord || lastWord.length < 3) {
         if (document.getElementById("typeahead-menu")) {
@@ -37,7 +37,6 @@ export default function TypeaheadExample() {
         }
         return;
       }
-      // TODO: const companyMatches = await PluginUtilites.getCompanies(KG_SERVICE_URL + lastWord);
       const menuItems = [
         { label: "Apple", value: "AAPL" },
         { label: "Microsoft", value: "MSFT" },
@@ -50,7 +49,7 @@ export default function TypeaheadExample() {
       const companyMatches = menuItems.filter((item) =>
         item.label.toLowerCase().includes(lastWord.toLowerCase())
       ); // TODO: replace with API call
-      console.log(companyMatches);
+      // console.log(companyMatches);
       if (document.getElementById("typeahead-menu")) {
         document.getElementById("typeahead-menu").remove();
       }
@@ -80,7 +79,7 @@ export default function TypeaheadExample() {
           />
         );
 
-        console.log("here creating a typeahead-menu root");
+        // console.log("here creating a typeahead-menu root");
         appRoot.appendChild(typeaheadMenu);
       }
     });
@@ -109,7 +108,7 @@ export default function TypeaheadExample() {
   };
 
   const getCursorLocation = (ele) => {
-    console.log("inside getCursorLocation", ele);
+    // console.log("inside getCursorLocation", ele);
     var target = document.createTextNode("\u0001");
     document.getSelection().getRangeAt(0).insertNode(target);
     var position = ele.innerHTML.indexOf("\u0001");
@@ -131,28 +130,51 @@ export default function TypeaheadExample() {
     }
   };
 
+  //find the child node and relative position and set it on range
+  const findingRange = (ind, nodes, position) => {
+    if (nodes[ind].textContent.length >= position) {
+      if (nodes[ind].childNodes.length > 0) {
+        return findingRange(0, nodes[ind].childNodes, position);
+      }
+      const node =
+        nodes[ind].nodeName === "#text" ? nodes[ind] : nodes[ind].firstChild;
+      return { node, offset: position };
+    }
+    return findingRange(
+      ind + 1,
+      nodes,
+      position - nodes[ind].textContent.length
+    );
+  };
+
   const updateInput = (input) => {
     const userInputBox = document.getElementById("listening-input-change");
     if (userInputBox) {
       const currentText = userInputBox.innerHTML;
       const position = cursorPosition;
-      const everythingBeforeCursor = currentText.substring(0, position); //.replace(/<[^>]+>/g, '');
+      const everythingBeforeCursor = currentText
+        .substring(0, position)
+        .replace(/<[^>]+>/g, " ");
       const insertAutocompleted = everythingBeforeCursor.split(" ");
       const lastWord = insertAutocompleted.pop();
       const newText =
-        (insertAutocompleted.length > 0
-          ? insertAutocompleted.join(" ") + " "
-          : "") +
+        currentText.substring(0, position - lastWord.length) +
         input +
         currentText.substring(position);
 
       userInputBox.innerHTML = newText;
-      const range = document.createRange();
-      const sel = window.getSelection();
-      range.setStart(
-        userInputBox.childNodes[0],
-        position + input.length - lastWord.length
+
+      const range = document.createRange(); //Create a range (a range is a like the selection but invisible)
+      const sel = window.getSelection(); //get the selection object (allows you to change selection)
+
+      const startingNode = findingRange(
+        0,
+        userInputBox.childNodes,
+        currentText.substring(0, position).replace(/<[^>]+>/g, "").length +
+          input.length -
+          lastWord.length
       );
+      range.setStart(startingNode.node, startingNode.offset);
       range.collapse(true);
       sel.removeAllRanges();
       sel.addRange(range);
@@ -176,7 +198,7 @@ export default function TypeaheadExample() {
         <div
           contentEditable="true"
           translate="no"
-          className="tiptap ChatInputNeue-module"
+          className="ChatInput"
           tabIndex="{0}"
         ></div>
       </div>
